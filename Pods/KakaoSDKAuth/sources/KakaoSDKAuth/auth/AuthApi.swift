@@ -165,15 +165,13 @@ final public class AuthApi {
     }
     
     /// 사용자 인증코드를 이용하여 신규 토큰 발급을 요청합니다.
-    public func token(grantType: String = "authorization_code",
-                      clientId: String = try! KakaoSDKCommon.shared.appKey(),
+    public func token(code: String,
                       redirectUri: String = try! KakaoSDKCommon.shared.redirectUri(),
-                      code: String,
                       completion:@escaping (OAuthToken?, Error?) -> Void) {
         API.responseData(.post,
                                 Urls.compose(.Kauth, path:Paths.authToken),
-                                parameters: ["grant_type":grantType,
-                                             "client_id":clientId,
+                                parameters: ["grant_type":"authorization_code",
+                                             "client_id":try! KakaoSDKCommon.shared.appKey(),
                                              "redirect_uri":redirectUri,
                                              "code":code,
                                              "ios_bundle_id":Bundle.main.bundleIdentifier].filterNil(),
@@ -196,13 +194,12 @@ final public class AuthApi {
     }
     
     /// 기존 토큰을 갱신합니다.
-    public func refreshAccessToken(clientId: String = try! KakaoSDKCommon.shared.appKey(),
-                                   refreshToken: String? = nil,
+    public func refreshAccessToken(refreshToken: String? = nil,
                                    completion:@escaping (OAuthToken?, Error?) -> Void) {
         API.responseData(.post,
                                 Urls.compose(.Kauth, path:Paths.authToken),
                                 parameters: ["grant_type":"refresh_token",
-                                             "client_id":clientId,
+                                             "client_id":try! KakaoSDKCommon.shared.appKey(),
                                              "refresh_token":refreshToken ?? AUTH.tokenManager.getToken()?.refreshToken,
                                              "ios_bundle_id":Bundle.main.bundleIdentifier].filterNil(),
                                 sessionType:.Auth,

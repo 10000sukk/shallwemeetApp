@@ -20,18 +20,18 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     var meetingLocation2:String?
     var meetingAge:String?
     var meetingTotal:String?
-    var meetingDate:String?
-
+    var meetingDefault = "상관없음"
+    
     var boardIdx:[Int?] = []
     var boardTitle:[String?] = []
     var boardimg1:[String?] = []
     var boardTag1:[String?] = []
     var boardTag2:[String?] = []
     var boardTag3:[String?] = []
-    var boardLocation:[String] = []
-    var boardAge:[Int?] = []
+    var boardLocation1:[String] = []
+    var boardLocation2:[String] = []
+    var boardAge:[Int] = []
     var boardTotal:[String] = []
-    var boardDate:[String] = []
     var boardUserIdx:[Int?] = []
     var boardUserNickName:[String?] = []
     var boardUserImg:[String?] = []
@@ -43,15 +43,25 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     
     var scrollReloadPossible = true
     
+    var gradientLayer: CAGradientLayer!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let ud = UserDefaults.standard
-        ud.set("true", forKey: "isClickedFilterButton")
-        meetingLocation1 = "상관없음"
-        meetingLocation2 = "상관없음"
-        meetingAge = "25"
-        meetingTotal = "2 대 2"
+        //backGround Color
+        let backGroundColor = MyBackGroundColor()
+        self.gradientLayer = CAGradientLayer()
+        self.gradientLayer.frame = self.view.bounds
+        self.gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        self.gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        self.gradientLayer.colors = [UIColor(red: backGroundColor.startColorRed, green: backGroundColor.startColorGreen, blue: backGroundColor.startColorBlue , alpha: 1).cgColor, UIColor(red: backGroundColor.endColorRed , green: backGroundColor.endColorGreen, blue: backGroundColor.endColorBlue, alpha: 1).cgColor]
+        self.view.layer.insertSublayer(self.gradientLayer, at: 0)
+        
+        self.meetingLocation1 = self.meetingDefault
+        self.meetingLocation2 = self.meetingDefault
+        self.meetingAge = self.meetingDefault
+        self.meetingTotal = self.meetingDefault
+    
     }
     
     
@@ -63,25 +73,8 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         print("할수 있다!!!!")
         
         //필터 내용 적용
-        let ud = UserDefaults.standard
-        if let age = ud.string(forKey: "filterAge"){
-            meetingAge = age
-        }
-        if let location1 = ud.string(forKey: "filterLocation1"){
-            meetingLocation1 = location1
-        }
-        if let location2 = ud.string(forKey: "filterLocation1"){
-            meetingLocation1 = location2
-        }
-        if let total = ud.string(forKey: "filterTotal"){
-            meetingTotal = total
-        }
-        if let date = ud.string(forKey: "filterDate"){
-            meetingDate = date
-        }
-        if let isClickedFilterButton =  ud.string(forKey: "isClickedFilterButton"){
-            self.isClickedFilterButton = isClickedFilterButton == "true" ? true : false
-        }
+        
+        
         //처음이나 필터가 눌렷을 경우에만 이를 수행
         if(self.isClickedFilterButton){
             self.boardIdx = []
@@ -90,10 +83,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
             self.boardTag1 = []
             self.boardTag2 = []
             self.boardTag3 = []
-            self.boardLocation = []
+            self.boardLocation1 = []
+            self.boardLocation2 = []
             self.boardAge = []
             self.boardTotal = []
-            self.boardDate = []
             self.boardUserIdx = []
             self.boardUserNickName = []
             self.boardUserImg = []
@@ -105,8 +98,15 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         }
         //게시판 정보 불러옴
         let url = Config.baseURL + "/api/boards"
-        let PARMS = ["userId": Config.userIdx!]
-        
+        let PARMS:Parameters = [
+            "userId": Config.userIdx!,
+            "location1":meetingLocation1!,
+            "location2":meetingLocation2!,
+            "age":meetingAge!,
+            "num_type":meetingTotal!,
+            "gender":Config.userGender!
+        ]
+        print(PARMS)
         AF.request(url, method: .get,parameters: PARMS ,encoding: URLEncoding.default,headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300)
             .responseJSON(){response in
                 switch response.result{
@@ -121,10 +121,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
                             self.boardTag1.append(jsonParsing[i].tag1)
                             self.boardTag2.append(jsonParsing[i].tag2)
                             self.boardTag3.append(jsonParsing[i].tag3)
-                            self.boardLocation.append(jsonParsing[i].location)
+                            self.boardLocation1.append(jsonParsing[i].location1)
+                            self.boardLocation2.append(jsonParsing[i].location2)
                             self.boardAge.append(jsonParsing[i].age)
                             self.boardTotal.append(jsonParsing[i].numType)
-                            self.boardDate.append(jsonParsing[i].createdDate)
                             self.boardUserIdx.append(jsonParsing[i].user.idx)
                             self.boardUserNickName.append(jsonParsing[i].user.nickName)
                             self.boardUserImg.append(jsonParsing[i].user.img)
@@ -158,11 +158,6 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
             //아니면 종료
             return
         }
-        controller.location1 = self.meetingLocation1!
-        controller.location2 = self.meetingLocation2!
-        controller.age = self.meetingAge!
-        controller.total = self.meetingTotal!
-        controller.date = self.meetingDate!
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true, completion: nil)
     }
@@ -206,10 +201,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
                             self.boardTag1.append(jsonParsing[i].tag1)
                             self.boardTag2.append(jsonParsing[i].tag2)
                             self.boardTag3.append(jsonParsing[i].tag3)
-                            self.boardLocation.append(jsonParsing[i].location)
+                            self.boardLocation1.append(jsonParsing[i].location1)
+                            self.boardLocation2.append(jsonParsing[i].location2)
                             self.boardAge.append(jsonParsing[i].age)
                             self.boardTotal.append(jsonParsing[i].numType)
-                            self.boardDate.append(jsonParsing[i].createdDate)
                             self.boardUserIdx.append(jsonParsing[i].user.idx)
                             self.boardUserNickName.append(jsonParsing[i].user.nickName)
                             self.boardUserImg.append(jsonParsing[i].user.img)
@@ -254,29 +249,34 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         catch{
             cell.imgCellPhoto.image = nil
         }
-        cell.lblCellLocation.text = boardLocation[indexPath.row]
+        cell.lblCellLocation1.text = boardLocation1[indexPath.row]
+        cell.lblCellLocation2.text = boardLocation2[indexPath.row]
         cell.lblCellTotal.text = boardTotal[indexPath.row]
-        cell.lblCellTime.text = boardDate[indexPath.row]
+        cell.lblCellAge.text = "\(String(describing: boardAge[indexPath.row]))"
         if (boardChecked[indexPath.row]!){
             cell.btnStar.setImage(UIImage(named: "./images/star_fill.png"), for: .normal)
         }
         else{
             cell.btnStar.setImage(UIImage(named: "./images/star_empty.png"), for: .normal)
         }
+        
+        
+        cell.shadowDecorate()
+        
         return cell
     }
     
     //행당 2개씩 셀 출력을 위해서
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width1 = collectionView.frame.size.width / 2
-        return CGSize(width: width1, height: width1)
+        let width1 = collectionView.frame.size.width / 2.4
+        return CGSize(width: width1, height: width1 * 1.3)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 20
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 20
     }
     
     //cell 이 터치시 수행하는 함수
@@ -284,6 +284,8 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         guard let controller = self.storyboard?.instantiateViewController(withIdentifier: "DetailRoomViewController") as?
             DetailRoomViewController else { return}
         controller.boardIdx = self.boardIdx[indexPath.row]
+        controller.cellIndexPath = indexPath
+        controller.beforeController = "SearchRoomViewController"
         controller.modalPresentationStyle = .fullScreen
         present(controller,animated: true, completion: nil)
     }
@@ -368,9 +370,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
 class CustomCell:UICollectionViewCell {
     
     @IBOutlet var imgCellPhoto: UIImageView!
-    @IBOutlet var lblCellLocation: UILabel!
+    @IBOutlet var lblCellLocation1: UILabel!
+    @IBOutlet var lblCellLocation2: UILabel!
     @IBOutlet var lblCellTotal: UILabel!
-    @IBOutlet var lblCellTime: UILabel!
+    @IBOutlet var lblCellAge: UILabel!
     @IBOutlet var btnStar: UIButton!
     
 }

@@ -15,7 +15,6 @@ class PickerLocation2ViewController: UIViewController, UIPickerViewDelegate, UIP
 
     let PICKER_VIEW_COLUMN = 1
     let location2_arr = [
-        ["상관없음"],
         ["상관없음","건대입구","홍대입구","신촌","강남역","이태원","인사동","종로"],
         ["상관없음","상무지구","구시청","전대후문"]
     ]
@@ -31,20 +30,25 @@ class PickerLocation2ViewController: UIViewController, UIPickerViewDelegate, UIP
         viewPickerLocation2.layer.cornerRadius = 50
         viewPickerLocation2.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
         location2 = "상관없음"
+        
+        
         // Do any additional setup after loading the view.
+       
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        switch location1! {
-        case "상관없음":
+        if let location1 = location1{
+            switch location1 {
+            case "서울":
+                statusNum = 0
+            case "광주":
+                statusNum = 1
+            default:
+                statusNum = 0
+            }
+        }
+        else{
             statusNum = 0
-        case "서울특별시":
-            statusNum = 1
-        case "광주광역시":
-            statusNum = 2
-        default:
-            myAlert("잠깐!", message: "지역을 다시 확인해 주세요")
-            dismiss(animated: false, completion: nil)
         }
     }
     
@@ -70,16 +74,17 @@ class PickerLocation2ViewController: UIViewController, UIPickerViewDelegate, UIP
         
         let preVC = self.presentingViewController
         if (beforeController! == "MakeRoomViewController"){
-            let ud = UserDefaults.standard
-            ud.set(self.location2, forKey: "makeRoomLocation2")
             guard let vc = preVC as? MakeRoomViewController else {return}
             vc.btnLocation2.setTitle(self.location2, for: .normal)
             self.presentingViewController?.dismiss(animated: false, completion:nil)
         }
         else if(beforeController! == "FilterViewController"){
-            let ud = UserDefaults.standard
-            ud.set(self.location2, forKey: "filterLocation2")
             guard let vc = preVC as? FilterViewController else {return}
+            vc.btnLocation2.setTitle(self.location2, for: .normal)
+            self.presentingViewController?.dismiss(animated: false, completion:nil)
+        }
+        else if(beforeController! == "ReviseProfileViewController"){
+            guard let vc = preVC as? ReviseProfileViewController else {return}
             vc.btnLocation2.setTitle(self.location2, for: .normal)
             self.presentingViewController?.dismiss(animated: false, completion:nil)
         }

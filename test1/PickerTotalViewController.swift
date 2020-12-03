@@ -23,6 +23,11 @@ class PickerTotalViewController: UIViewController, UIPickerViewDelegate, UIPicke
         viewPickerTotal.clipsToBounds = true
         viewPickerTotal.layer.cornerRadius = 50
         viewPickerTotal.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
+        
+        let ud = UserDefaults.standard
+        if let beforeController = ud.string(forKey: "beforeController"){
+            self.beforeController = beforeController
+        }
 
         // Do any additional setup after loading the view.
     }

@@ -22,7 +22,6 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
     @IBOutlet var lblAge: UILabel!
     @IBOutlet var slideAge: UISlider!
     @IBOutlet var btnTotal: UIButton!
-    @IBOutlet var btnDate: UIButton!
     @IBOutlet var txtTag1: UITextField!
     @IBOutlet var txtTag2: UITextField!
     @IBOutlet var txtTag3: UITextField!
@@ -38,9 +37,19 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
     
     var isPhoto:[Bool] = [false, false, false]
     
+    var gradientLayer: CAGradientLayer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //backGround Color
+        let backGroundColor = MyBackGroundColor()
+        self.gradientLayer = CAGradientLayer()
+        self.gradientLayer.frame = self.view.bounds
+        self.gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        self.gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        self.gradientLayer.colors = [UIColor(red: backGroundColor.startColorRed, green: backGroundColor.startColorGreen, blue: backGroundColor.startColorBlue , alpha: 1).cgColor, UIColor(red: backGroundColor.endColorRed , green: backGroundColor.endColorGreen, blue: backGroundColor.endColorBlue, alpha: 1).cgColor]
+        self.view.layer.insertSublayer(self.gradientLayer, at: 0)
         
         //스크롤뷰 터치 먹히기 위한 전처리
         let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(MyTapMethod))
@@ -63,16 +72,8 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         imgForMeeting3.isUserInteractionEnabled = true
         
         
-        //txtUserpwcheck.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        let ud = UserDefaults.standard
-        ud.set("상관없음", forKey: "makeRoomLocation1")
-        ud.set("상관없음", forKey: "makeRoomLocation2")
-        ud.set("2 대 2", forKey: "makeRoomTotal")
-        ud.set("25", forKey: "makeRoomAge")
+        
 
 
         // Do any additional setup after loading the view.
@@ -89,16 +90,7 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
     @objc func MyTapMethod(sender: UITapGestureRecognizer) {
             self.view.endEditing(true)
         }
-    // Move view 150 points upward
-    @objc func keyboardWillShow(_ sender: Notification) {
-        self.view.frame.origin.y = -100
-       }
-
     
-    // Move view to original position
-    @objc func keyboardWillHide(_ sender: Notification) {
-        self.view.frame.origin.y = 0
-        }
     
     
     @objc func touchImg1(){
@@ -203,12 +195,6 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
     
 
     @IBAction func btnBack(_ sender: UIButton) {
-        let ud = UserDefaults.standard
-        ud.removeObject(forKey: "makeRoomLocation1")
-        ud.removeObject(forKey: "makeRoomLocation2")
-        ud.removeObject(forKey: "makeRoomTotal")
-        ud.removeObject(forKey: "makeRoomDate")
-        ud.removeObject(forKey: "makeRoomAge")
         dismiss(animated: true, completion: nil)
     }
     @IBAction func btnLocation1(_ sender: UIButton) {
@@ -223,7 +209,6 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         
     }
     @IBAction func btnLocation2(_ sender: UIButton) {
-        let ud = UserDefaults.standard
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
         guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerLocation2ViewController") as? PickerLocation2ViewController else {return}
         controller.providesPresentationContextTransitionStyle = true
@@ -231,14 +216,12 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
         controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
         controller.beforeController = "MakeRoomViewController"
-        controller.location1 = ud.string(forKey: "makeRoomLocation1")!
+        controller.location1 = self.btnLocation1.titleLabel?.text!
         self.present(controller, animated: false, completion: nil)
     }
     
     @IBAction func slideChange(_ sender: UISlider) {
-        let ud = UserDefaults.standard
         lblAge.text = "\(Int(sender.value))"
-        ud.set(Int(sender.value), forKey:"makeRoomAge")
     }
     @IBAction func btnTotal(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
@@ -250,9 +233,9 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         controller.beforeController = "MakeRoomViewController"
         self.present(controller, animated: false, completion: nil)
     }
-    @IBAction func btnDate(_ sender: UIButton) {
+    @IBAction func btnDate2(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
-        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerDateViewController") as? PickerDateViewController else {return}
+        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerDate2ViewController") as? PickerDateViewController else {return}
         controller.providesPresentationContextTransitionStyle = true
         controller.definesPresentationContext = true
         controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
@@ -260,17 +243,17 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         controller.beforeController = "MakeRoomViewController"
         self.present(controller, animated: false, completion: nil)
     }
+    
     @IBAction func btnDone(_ sender: UIButton) {
-        let ud  = UserDefaults.standard
         guard let title = self.txtTitle.text, !title.isEmpty else { myAlert("잠깐!", message: "방제목을 확인해 주세요"); return}
-        guard let location1 = ud.string(forKey: "makeRoomLocation1"), !location1.isEmpty else {return}
-        guard let location2 = ud.string(forKey: "makeRoomLocation2"), !location2.isEmpty else {return}
-        guard let total = ud.string(forKey: "makeRoomTotal"), !total.isEmpty else { return}
-        let age = ud.integer(forKey: "makeRoomAge")
-        guard let date = ud.string(forKey: "makeRoomDate"), !date.isEmpty else{ myAlert("잠깐!", message: "날짜를 선택 안하셧군요"); return}
+        guard let location1 = self.btnLocation1.titleLabel?.text, !location1.isEmpty else {return}
+        guard let location2 = self.btnLocation2.titleLabel?.text, !location2.isEmpty else {return}
+        guard let total = self.btnTotal.titleLabel?.text, !total.isEmpty else { return}
+        let age = self.lblAge.text!
         guard let tag1 = self.txtTag1.text, !tag1.isEmpty else { myAlert("잠깐!", message: "자신에 대해서 어필을 입력해 주세요"); return}
         guard let tag2 = self.txtTag2.text, !tag2.isEmpty else { myAlert("잠깐!", message: "자신에 대해서 어필을 입력해 주세요"); return}
         guard let tag3 = self.txtTag3.text, !tag3.isEmpty else { myAlert("잠깐!", message: "자신에 대해서 어필을 입력해 주세요"); return}
+        
         
         let url = Config.baseURL + "/api/boards"
         
@@ -280,10 +263,11 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
             "tag1":tag1,
             "tag2":tag2,
             "tag3":tag3,
-            "location": location1 + "-" + location2,
+            "location1": location1,
+            "location2" : location2,
             "num_type": total,
             "average_age":age,
-            "gender":"여",
+            "gender":Config.userGender!,
             "user":"\(Config.userIdx!)"
         ]
         guard let imageData1 = self.imgForMeeting1.image!.jpegData(compressionQuality: 0.2) else {

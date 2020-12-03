@@ -16,27 +16,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="미팅 어때?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yWz-Qa-aPP">
-                                <rect key="frame" x="165" y="436" width="84" height="24"/>
-                                <fontDescription key="fontDescription" type="italicSystem" pointSize="20"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="images/logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="y2q-C1-pTn">
-                                <rect key="frame" x="0.0" y="266.5" width="414" height="128"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="images/splashImage.jpeg" translatesAutoresizingMaskIntoConstraints="NO" id="y2q-C1-pTn">
+                                <rect key="frame" x="62" y="303" width="290" height="290"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="y2q-C1-pTn" secondAttribute="height" multiplier="1:1" id="3e4-Gb-5Ja"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" red="0.8874972404" green="1" blue="0.91786008240000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="y2q-C1-pTn" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" id="5FQ-aO-n7N"/>
-                            <constraint firstItem="yWz-Qa-aPP" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="8rh-lY-m94"/>
-                            <constraint firstItem="y2q-C1-pTn" firstAttribute="top" relation="lessThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="224" id="F2Y-iV-l7r"/>
-                            <constraint firstItem="y2q-C1-pTn" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="V2D-Wi-xwm"/>
-                            <constraint firstItem="y2q-C1-pTn" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="cya-GO-AMK"/>
-                            <constraint firstItem="yWz-Qa-aPP" firstAttribute="top" secondItem="y2q-C1-pTn" secondAttribute="bottom" constant="41.5" id="fZL-81-vct"/>
-                            <constraint firstItem="y2q-C1-pTn" firstAttribute="height" secondItem="Ze5-6b-2t3" secondAttribute="height" multiplier="0.142857" id="yJs-ym-Cs4"/>
-                            <constraint firstItem="yWz-Qa-aPP" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="yap-zf-1VW"/>
+                            <constraint firstItem="y2q-C1-pTn" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="IsC-tl-kk2"/>
+                            <constraint firstItem="y2q-C1-pTn" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.7" id="ePY-A6-fjz"/>
+                            <constraint firstItem="y2q-C1-pTn" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="fpe-W4-OXs"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -46,6 +38,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="images/logo.png" width="128" height="128"/>
+        <image name="images/splashImage.jpeg" width="128" height="128"/>
     </resources>
 </document>

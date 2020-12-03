@@ -141,7 +141,8 @@ class LoginViewController: UIViewController {
                 print("gender: \(kakaoGender)")
                 
                 let PARAM:Parameters = [
-                    "email": kakaoEmail]
+                    "email": kakaoEmail!
+                ]
                 
 //                guard let url = URL(string: Config.baseURL+":8080/api/users/login") else{
 //                    return

@@ -28,6 +28,11 @@ class PickerDateViewController: UIViewController {
         date = formatter.string(from: currentDate as Date)
         
         datePicker?.minimumDate = Date()
+        
+        let ud = UserDefaults.standard
+        if let beforeController = ud.string(forKey: "beforeController"){
+            self.beforeController = beforeController
+        }
     }
     
     
@@ -42,17 +47,13 @@ class PickerDateViewController: UIViewController {
     @IBAction func btnDone(_ sender: UIButton) {
         let preVC = self.presentingViewController
         if (beforeController! == "MakeRoomViewController"){
-            let ud = UserDefaults.standard
-            ud.set(self.date, forKey: "makeRoomDate")
             guard let vc = preVC as? MakeRoomViewController else {return}
-            vc.btnDate.setTitle(self.date, for: .normal)
+            //vc.btnDate.setTitle(self.date, for: .normal)
             self.presentingViewController?.dismiss(animated: false, completion:nil)
         }
         else if (beforeController! == "FilterViewController"){
-            let ud = UserDefaults.standard
-            ud.set(self.date, forKey: "filterDate")
             guard let vc = preVC as? FilterViewController else {return}
-            vc.btnDate.setTitle(self.date, for: .normal)
+            //vc.btnDate.setTitle(self.date, for: .normal)
             self.presentingViewController?.dismiss(animated: false, completion:nil)
         }
     }

@@ -16,31 +16,29 @@ class FilterViewController: UIViewController {
     @IBOutlet var lblAge: UILabel!
     @IBOutlet var sliderBar: UISlider!
     @IBOutlet var btnTotal: UIButton!
-    @IBOutlet var btnDate: UIButton!
     
-    
-    var location1:String = "서울"
-    var location2:String = "상관없음"
-    var age:String  = "25"
-    var total:String = "3"
-    var date:String?
- 
+    var gradientLayer: CAGradientLayer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        //backGround Color
+        let backGroundColor = MyBackGroundColor()
+        self.gradientLayer = CAGradientLayer()
+        self.gradientLayer.frame = self.view.bounds
+        self.gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        self.gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        self.gradientLayer.colors = [UIColor(red: backGroundColor.startColorRed, green: backGroundColor.startColorGreen, blue: backGroundColor.startColorBlue , alpha: 1).cgColor, UIColor(red: backGroundColor.endColorRed , green: backGroundColor.endColorGreen, blue: backGroundColor.endColorBlue, alpha: 1).cgColor]
+        self.view.layer.insertSublayer(self.gradientLayer, at: 0)
         
-        let ud = UserDefaults.standard
-        ud.set("상관없음", forKey: "FilterLocation1")
-        ud.set("상관없음", forKey: "FilterLocation2")
-        ud.set("2 대 2", forKey: "FilterTotal")
-        ud.set("25", forKey: "FilterAge")
+        
         
     }
     
     @IBAction func btnBack(_ sender: UIButton) {
-        let ud = UserDefaults.standard
-        ud.set("false", forKey: "isClickedFilterButton")
+        let preVC = self.presentingViewController
+        guard let vc = preVC as? SearchRoomViewController else {return}
+        vc.isClickedFilterButton = false
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -57,7 +55,6 @@ class FilterViewController: UIViewController {
         self.present(controller, animated: false, completion: nil)
     }
     @IBAction func btnLocation2(_ sender: UIButton) {
-        let ud = UserDefaults.standard
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
         guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerLocation2ViewController") as? PickerLocation2ViewController else {return}
         controller.providesPresentationContextTransitionStyle = true
@@ -65,14 +62,13 @@ class FilterViewController: UIViewController {
         controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
         controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
         controller.beforeController = "FilterViewController"
-        controller.location1 = ud.string(forKey: "filterLocation1")!
+        controller.location1 = self.btnLocation1.titleLabel?.text!
+        print(controller.location1)
         self.present(controller, animated: false, completion: nil)
     }
     
     @IBAction func sliderValueChanged(_ sender: UISlider) {
-        let ud = UserDefaults.standard
         lblAge.text = "\(Int(sender.value))"
-        ud.set(Int(sender.value), forKey:"filterAge")
     }
     @IBAction func btnTotal(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
@@ -86,29 +82,25 @@ class FilterViewController: UIViewController {
     }
     
     
-    @IBAction func btnDate(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "Picker", bundle: nil)
-        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerDateViewController") as? PickerDateViewController else {return}
-        controller.providesPresentationContextTransitionStyle = true
-        controller.definesPresentationContext = true
-        controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
-        controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
-        controller.beforeController = "FilterViewController"
-        self.present(controller, animated: false, completion: nil)
-    }
     
     @IBAction func btnDone(_ sender: UIButton) {
         
-        /* UserDefault 저장소를 이용햔 객체 저장 */
-        //UserDefault 객체의 인스턴스를 가져온다.
-        let ud = UserDefaults.standard
-        ud.set(self.age, forKey: "filterAge")
-        ud.set(self.location1, forKey: "filterLocaion1")
-        ud.set(self.location2, forKey: "filterLocaion2")
-        ud.set(self.total, forKey: "filterTotal")
-        guard let date  = self.date else{ myAlert("잠깐!", message: "날짜를 설정해 주세요."); return}
-        ud.set(date, forKey: "filterDate")
-        ud.set("true", forKey: "isClickedFilterButton")
+        
+        let preVC = self.presentingViewController
+        guard let vc = preVC as? SearchRoomViewController else {return}
+        if let location1 = self.btnLocation1.titleLabel?.text{
+            vc.meetingLocation1 = location1
+        }
+        if let location2 = self.btnLocation2.titleLabel?.text{
+            vc.meetingLocation2 = location2
+        }
+        if let age = self.lblAge.text{
+            vc.meetingAge = age
+        }
+        if let total = self.btnTotal.titleLabel?.text{
+            vc.meetingTotal = total
+        }
+        vc.isClickedFilterButton = true
         
         dismiss(animated: true, completion: nil)
     }
