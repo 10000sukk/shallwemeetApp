@@ -14,7 +14,9 @@ struct Config {
     static let baseURL = "https://shallwemeet.co.kr"
     static var userIdx:Int?
     static var userEmail:String?
-    static var userGender:String? = "female"
+    static var userGender:String?
+    static var fcmToken:String?
+    static var phoneNumber:String?
 }
 public struct MyBackGroundColor {
     let startColorRed:CGFloat = 34/255

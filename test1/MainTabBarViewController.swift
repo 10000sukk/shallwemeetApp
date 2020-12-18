@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class MainTabBarViewController: UITabBarController {
 
@@ -14,6 +15,28 @@ class MainTabBarViewController: UITabBarController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
+        let url = Config.baseURL + "/api/users/\(Config.userIdx!)"
+        
+        AF.request(url, method: .get, encoding: URLEncoding.default, headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300).responseJSON(){response in
+            switch(response.result){
+            case .success(let json):
+                do {
+                    let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+                    let jsonParsing = try JSONDecoder().decode(UserParsing.self, from: data)
+                    
+                    Config.userGender = jsonParsing.gender
+                        //reload collectionView
+                    }catch let jsonError{
+                        print("Error seriallizing json:",jsonError)
+                    }
+                
+            case .failure(let error):
+                print("error: \(String(describing: error))")
+            }
+            
+        }
+        
     }
     
 

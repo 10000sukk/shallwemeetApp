@@ -16,7 +16,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     @IBOutlet var lblProfiletext: UILabel!
     @IBOutlet var txtNickname: UITextField!
     @IBOutlet var txtUserAge: UITextField!
-    @IBOutlet var btnDone: UIButton!
+    @IBOutlet var segGender: UISegmentedControl!
+    @IBOutlet var btnLocation1: UIButton!
+    @IBOutlet var btnLocation2: UIButton!
     @IBOutlet var scrollView: UIScrollView!
     
     //유저정보
@@ -78,6 +80,31 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
 
     
+    
+    @IBAction func btnLocation1(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Picker", bundle: nil)
+        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerLocation1ViewController") as? PickerLocation1ViewController else {return}
+        controller.providesPresentationContextTransitionStyle = true
+        controller.definesPresentationContext = true
+        controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
+        controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
+        controller.beforeController = "EditProfileViewController"
+        self.present(controller, animated: false, completion: nil)
+    }
+    
+    @IBAction func btnLocation2(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Picker", bundle: nil)
+        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerLocation2ViewController") as? PickerLocation2ViewController else {return}
+        controller.providesPresentationContextTransitionStyle = true
+        controller.definesPresentationContext = true
+        controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
+        controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
+        controller.beforeController = "EditProfileViewController"
+        controller.location1 = self.btnLocation1.titleLabel?.text!
+        self.present(controller, animated: false, completion: nil)
+    }
+    
+    
     @IBAction func btnDone(_ sender: UIButton) {
         if (isPhoto != true){
             myAlert("확인", message: "사진을 올려 주세요")
@@ -85,9 +112,16 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
         guard let userNickname = txtNickname.text, !userNickname.isEmpty else { myAlert("확인", message: "닉네임을 입력해 주세요!"); return }
         guard let userAge = txtUserAge.text, !userAge.isEmpty else { myAlert("확인", message: "나이를 입력해 주세요!"); return }
-        
+        guard let location1 = btnLocation1.titleLabel?.text, !location1.isEmpty else{return}
+        guard let location2 = btnLocation2.titleLabel?.text, !location2.isEmpty else{return}
         // 예외 처리 : Textfield가 빈문자열이 아니고, nil이 아닐 때
-        
+        var gender:String?
+        if(self.segGender.selectedSegmentIndex == 0){
+            gender = "female"
+        }
+        else{
+            gender = "male"
+        }
         
 //        //탭바로 이동
 //        let tb = self.storyboard?.instantiateViewController(identifier: "MainTabBarViewController")
@@ -102,9 +136,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             "nickName":userNickname,
             "age":userAge as String ,
             "email":Config.userEmail!,
-            "location":"서울",
-            "kakao_id":"ee@kakao.com"
+            "location1": location1,
+            "location2": location2,
+            "token": Config.fcmToken!,
+            "phone":Config.phoneNumber!,
+            "gender":gender!
         ]
+        
         
         guard let imageData = captureImage!.jpegData(compressionQuality: 0.2) else {
             print("Could not get JPEG representation of UIImage")

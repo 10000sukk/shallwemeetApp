@@ -22,9 +22,14 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
     @IBOutlet var lblAge: UILabel!
     @IBOutlet var slideAge: UISlider!
     @IBOutlet var btnTotal: UIButton!
+    
+    @IBOutlet var btnDate: UIButton!
     @IBOutlet var txtTag1: UITextField!
     @IBOutlet var txtTag2: UITextField!
     @IBOutlet var txtTag3: UITextField!
+    
+    //방생성 버튼 중복터치 방지
+    var isDoneButtonTouched:Bool = false
     
     //카메라 사용 변수
     let imagePicker: UIImagePickerController! = UIImagePickerController()
@@ -35,7 +40,11 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
     var keyboardShown:Bool = false // 키보드 상태 확인
     var originY:CGFloat? // 오브젝트의 기본 위치
     
+    //몇번째 저장 사진인지를 판단
     var isPhoto:[Bool] = [false, false, false]
+    
+    //사진이 3장 전부 업로드 되었는지를 판단
+    var isContainPhoto:[Bool] = [false, false, false]
     
     var gradientLayer: CAGradientLayer!
     
@@ -71,6 +80,12 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         imgForMeeting3.addGestureRecognizer(tapGesture3)
         imgForMeeting3.isUserInteractionEnabled = true
         
+        
+        //날짜를 default 를 현재 날짜로 설정
+        let currentDate = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        self.btnDate.setTitle(formatter.string(from: currentDate as Date), for: .normal)
         
         
         
@@ -166,21 +181,21 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
                 if (self.isPhoto[i]){
                     if(i == 0){
                         imgForMeeting1.image = captureImage
-                        isPhoto[i] = false
                     }
                     else if(i == 1){
                         imgForMeeting2.image = captureImage
-                        isPhoto[i] = false
                     }
                     else if(i == 2){
                         imgForMeeting3.image = captureImage
-                        isPhoto[i] = false
                     }
                     else{
                         print("what the fuck")
                     }
+                    self.isContainPhoto[i] = true
+                    isPhoto[i] = false
                 }
             }
+            
         }
         
         
@@ -233,6 +248,18 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         controller.beforeController = "MakeRoomViewController"
         self.present(controller, animated: false, completion: nil)
     }
+    
+    @IBAction func btnDate(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Picker", bundle: nil)
+        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerDateViewController") as? PickerDateViewController else {return}
+        controller.providesPresentationContextTransitionStyle = true
+        controller.definesPresentationContext = true
+        controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
+        controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
+        controller.beforeController = "MakeRoomViewController"
+        self.present(controller, animated: false, completion: nil)
+    }
+    
     @IBAction func btnDate2(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
         guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerDate2ViewController") as? PickerDateViewController else {return}
@@ -249,11 +276,18 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
         guard let location1 = self.btnLocation1.titleLabel?.text, !location1.isEmpty else {return}
         guard let location2 = self.btnLocation2.titleLabel?.text, !location2.isEmpty else {return}
         guard let total = self.btnTotal.titleLabel?.text, !total.isEmpty else { return}
+        guard let date = self.btnDate.titleLabel?.text, !date.isEmpty else {return}
         let age = self.lblAge.text!
         guard let tag1 = self.txtTag1.text, !tag1.isEmpty else { myAlert("잠깐!", message: "자신에 대해서 어필을 입력해 주세요"); return}
         guard let tag2 = self.txtTag2.text, !tag2.isEmpty else { myAlert("잠깐!", message: "자신에 대해서 어필을 입력해 주세요"); return}
         guard let tag3 = self.txtTag3.text, !tag3.isEmpty else { myAlert("잠깐!", message: "자신에 대해서 어필을 입력해 주세요"); return}
         
+        for i in 0 ..< self.isContainPhoto.count{
+            if(!self.isContainPhoto[i]){
+                myAlert("잠깐", message: "사진은 3장을 올려주세요")
+                return
+            }
+        }
         
         let url = Config.baseURL + "/api/boards"
         
@@ -268,7 +302,8 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
             "num_type": total,
             "average_age":age,
             "gender":Config.userGender!,
-            "user":"\(Config.userIdx!)"
+            "user":"\(Config.userIdx!)",
+            "date": date
         ]
         guard let imageData1 = self.imgForMeeting1.image!.jpegData(compressionQuality: 0.2) else {
             print("Could not get JPEG representation of UIImage")
@@ -282,6 +317,13 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
             print("Could not get JPEG representation of UIImage")
             return
           }
+        
+        //중복 요청 방지
+        if(self.isDoneButtonTouched == true){
+            return
+        }
+        self.isDoneButtonTouched = true
+        
         AF.upload(multipartFormData: { multipartFormData in
             for (key, value) in PARMS {
                 multipartFormData.append("\(value)".data(using: .utf8)!, withName: key, mimeType: "text/plain")
@@ -295,7 +337,7 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
             case .success(let json):
                 do {
                     let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                    let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                    let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                     if(jsonParsing.code == 200){
                         let alert = UIAlertController(title: "알림", message: "방 생성을 완료 하였습니다. 좋은 사람과 맺어지길 기원합니다.", preferredStyle: .alert)
                         let action = UIAlertAction(title: "확인", style: UIAlertAction.Style.default, handler: {_ in 
@@ -306,6 +348,7 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
                     }
                     else{
                         self.myAlert("알림", message: "방 생성을 실패 하였습니다.")
+                        self.isDoneButtonTouched = false
                     }
         
                     
@@ -315,6 +358,7 @@ class MakeRoomViewController: UIViewController, UIScrollViewDelegate, UINavigati
                 
             case .failure(let error):
                 print("error: \(String(describing: error))")
+                self.isDoneButtonTouched = false
             }
         }
     }

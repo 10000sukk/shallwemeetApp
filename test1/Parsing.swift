@@ -43,7 +43,7 @@ typealias BoardsParse = [BoardsParsing]
 
 
 
-public struct CodeAndMessage: Codable{
+public struct CodeAndMsg: Codable{
     let code:Int
     let msg:String
     
@@ -52,6 +52,17 @@ public struct CodeAndMessage: Codable{
     }
     
 }
+
+public struct CodeAndMessage: Codable{
+    let code:Int
+    let message:String
+    
+    enum CodingKeys: String, CodingKey {
+        case code, message
+    }
+    
+}
+
 
 
 struct DetailBoardParsing: Codable {

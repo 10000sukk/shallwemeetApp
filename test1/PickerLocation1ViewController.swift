@@ -70,6 +70,12 @@ class PickerLocation1ViewController: UIViewController, UIPickerViewDelegate, UIP
             vc.btnLocation2.setTitle("상관없음", for: .normal)
             self.presentingViewController?.dismiss(animated: false, completion:nil)
         }
+        else if(beforeController! == "EditProfileViewController"){
+            guard let vc = preVC as? EditProfileViewController else {return}
+            vc.btnLocation1.setTitle(self.location1, for: .normal)
+            vc.btnLocation2.setTitle("상관없음", for: .normal)
+            self.presentingViewController?.dismiss(animated: false, completion:nil)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

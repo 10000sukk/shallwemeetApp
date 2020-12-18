@@ -73,46 +73,50 @@ class LoginViewController: UIViewController {
         
 //        // 시뮬레이터에 카카오가 깔려 있어야 가능하다.
 //        // 카카오톡 설치 여부 확인
-//          if (AuthApi.isKakaoTalkLoginAvailable()) {
-//            // 카카오톡 로그인. api 호출 결과를 클로저로 전달.
-//            AuthApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-//                if let error = error {
-//                    // 예외 처리 (로그인 취소 등)
-//                    print(error)
-//                }
-//                else {
-//                    print("loginWithKakaoTalk() success.")
-//                   // do something
-//                    _ = oauthToken
-//                   // 어세스토큰
-//                   let accessToken = oauthToken?.accessToken
-//
-//                    //카카오 로그인을 통해 사용자 토큰을 발급 받은후에 사용자 관리 API 호출
-//                    self.setUserInfo()
-//                }
-//            }
-//          }
         
-        //시뮬레이터에 카카오가 없는 관걔로 대체 코드
-        AuthApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-           if let error = error {
-             print(error)
-           }
-           else {
-            print("loginWithKakaoAccount() success!!!!!!!!!1.")
-            
-            //do something
-            _ = oauthToken
-            
-            // 어세스토큰
-            let accessToken = oauthToken?.accessToken
-            print("엑세스 토큰")
-            print(accessToken)
-            
-            //카카오 로그인을 통해 사용자 토큰을 발급 받은 후 사용자 관리 API 호출
-            self.setUserInfo()
-           }
-        }
+        if (AuthApi.isKakaoTalkLoginAvailable()) {
+            // 카카오톡 로그인. api 호출 결과를 클로저로 전달.
+            AuthApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+                if let error = error {
+                    // 예외 처리 (로그인 취소 등)
+                    print(error)
+                    
+                }
+                else {
+                    print("loginWithKakaoTalk() success.")
+                    // do something
+                    _ = oauthToken
+                    // 어세스토큰
+                    let accessToken = oauthToken?.accessToken
+
+                    //카카오 로그인을 통해 사용자 토큰을 발급 받은후에 사용자 관리 API 호출
+                    self.setUserInfo()
+                }
+            }
+          }
+          else{
+            //시뮬레이터에 카카오가 없는 관걔로 대체 코드
+            AuthApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+               if let error = error {
+                 print(error)
+               }
+               else {
+                print("loginWithKakaoAccount() success!!!!!!!!!1.")
+                
+                //do something
+                _ = oauthToken
+                
+                // 어세스토큰
+                let accessToken = oauthToken?.accessToken
+                print("엑세스 토큰")
+                print(accessToken)
+                
+                //카카오 로그인을 통해 사용자 토큰을 발급 받은 후 사용자 관리 API 호출
+                self.setUserInfo()
+               }
+            }
+          }
+        
         
     }
     
@@ -141,7 +145,8 @@ class LoginViewController: UIViewController {
                 print("gender: \(kakaoGender)")
                 
                 let PARAM:Parameters = [
-                    "email": kakaoEmail!
+                    "email": kakaoEmail!,
+                    "token": Config.fcmToken!
                 ]
                 
 //                guard let url = URL(string: Config.baseURL+":8080/api/users/login") else{
@@ -167,7 +172,7 @@ class LoginViewController: UIViewController {
                         //신규 유저라면 프로필 만들기 화면으로
                         if(response.object(forKey: "_checked") as! Int == 0){
                             Config.userEmail = kakaoEmail
-                            let controller = self.storyboard?.instantiateViewController(identifier: "EditProfileViewController")
+                            let controller = self.storyboard?.instantiateViewController(identifier: "SMSCheckViewController")
                             controller!.modalPresentationStyle = .fullScreen
                             self.present(controller!, animated: true, completion: nil)
                         }

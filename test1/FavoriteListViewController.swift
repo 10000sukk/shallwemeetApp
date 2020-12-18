@@ -19,6 +19,7 @@ class FavoriteListViewController: UIViewController, UICollectionViewDataSource, 
     var boardLocation2:[String] = []
     var boardAge:[Int] = []
     var boardTotal:[String] = []
+    var boardDate:[String] = []
    
     var gradientLayer: CAGradientLayer!
     
@@ -46,6 +47,7 @@ class FavoriteListViewController: UIViewController, UICollectionViewDataSource, 
         self.boardLocation2 = []
         self.boardAge = []
         self.boardTotal = []
+        self.boardDate = []
         
         let url = Config.baseURL + "/api/bookmark" + "/\(Config.userIdx!)"
 
@@ -63,6 +65,7 @@ class FavoriteListViewController: UIViewController, UICollectionViewDataSource, 
                             self.boardLocation2.append(jsonParsing[i].board.location2)
                             self.boardAge.append(jsonParsing[i].board.age)
                             self.boardTotal.append(jsonParsing[i].board.numType)
+                            self.boardDate.append(jsonParsing[i].board.date)
                             
                         
                             //reload collectionView
@@ -95,7 +98,7 @@ class FavoriteListViewController: UIViewController, UICollectionViewDataSource, 
                 case .success(let json):
                     do {
                         let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                        let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                        let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                         if (jsonParsing.code == 200){
                             self.boardIdx.remove(at: index!.row)
                             self.boardimg1.remove(at: index!.row)
@@ -103,6 +106,7 @@ class FavoriteListViewController: UIViewController, UICollectionViewDataSource, 
                             self.boardLocation2.remove(at: index!.row)
                             self.boardTotal.remove(at: index!.row)
                             self.boardAge.remove(at: index!.row)
+                            self.boardDate.remove(at: index!.row)
                             self.collectionViewMyFavorite.deleteItems(at: [index!])
                         }
                     }catch let jsonError{
@@ -132,27 +136,31 @@ class FavoriteListViewController: UIViewController, UICollectionViewDataSource, 
         catch{
             cell.imgCellFavoritePhoto.image = nil
         }
-        cell.lblCellFavoriteLocation1.text = boardLocation1[indexPath.row] + " " + boardLocation2[indexPath.row]
+        cell.lblCellFavoriteLocation1.text = boardLocation1[indexPath.row]
+        cell.lblCellFavoriteLocation2.text = boardLocation2[indexPath.row]
         cell.lblCellFavoriteAge.text = "\(String(describing: boardAge[indexPath.row]))"
         cell.lblCellFavoriteTotal.text = boardTotal[indexPath.row]
         
-        //cell 테두리
-        cell.shadowDecorate()
+        
+        let tmpDateArr = boardDate[indexPath.row].components(separatedBy: "-")
+        cell.lblCellFavoriteDate.text = tmpDateArr[1] + "월 " + tmpDateArr[2] + "일"
+        
+        cell.viewTranslucent.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         
         return cell
     }
     
     //행당 2개씩 셀 출력을 위해서
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width1 = collectionView.frame.size.width / 2.4
-        return CGSize(width: width1, height: width1 * 1.3)
+        let width1 = collectionView.frame.size.width / 2
+        return CGSize(width: width1 - 8, height: (width1 - 8) * 0.9)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
+        return 5
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
+        return 0
     }
     
     //cell 이 터치시 수행하는 함수
@@ -187,7 +195,10 @@ class MyFavoriteCustomCell:UICollectionViewCell{
     @IBOutlet var imgCellFavoritePhoto: UIImageView!
     @IBOutlet var btnCellFavoriteStar: UIButton!
     @IBOutlet var lblCellFavoriteLocation1: UILabel!
+    @IBOutlet var lblCellFavoriteLocation2: UILabel!
+    @IBOutlet var lblCellFavoriteDate: UILabel!
     @IBOutlet var lblCellFavoriteAge: UILabel!
     @IBOutlet var lblCellFavoriteTotal: UILabel!
+    @IBOutlet var viewTranslucent: UIView!
     
 }

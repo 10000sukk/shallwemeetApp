@@ -20,6 +20,7 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     var meetingLocation2:String?
     var meetingAge:String?
     var meetingTotal:String?
+    var meetingDate:String?
     var meetingDefault = "상관없음"
     
     var boardIdx:[Int?] = []
@@ -32,6 +33,7 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     var boardLocation2:[String] = []
     var boardAge:[Int] = []
     var boardTotal:[String] = []
+    var boardDate:[String] = []
     var boardUserIdx:[Int?] = []
     var boardUserNickName:[String?] = []
     var boardUserImg:[String?] = []
@@ -61,6 +63,7 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         self.meetingLocation2 = self.meetingDefault
         self.meetingAge = self.meetingDefault
         self.meetingTotal = self.meetingDefault
+        self.meetingDate = self.meetingDefault
     
     }
     
@@ -70,7 +73,6 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     //만일 back 버튼으로 돌아 왔을 경우는 수행하지 않도록 한다.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        print("할수 있다!!!!")
         
         //필터 내용 적용
         
@@ -87,6 +89,7 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
             self.boardLocation2 = []
             self.boardAge = []
             self.boardTotal = []
+            self.boardDate = []
             self.boardUserIdx = []
             self.boardUserNickName = []
             self.boardUserImg = []
@@ -104,9 +107,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
             "location2":meetingLocation2!,
             "age":meetingAge!,
             "num_type":meetingTotal!,
+            "date":meetingDate!,
             "gender":Config.userGender!
         ]
-        print(PARMS)
+        
         AF.request(url, method: .get,parameters: PARMS ,encoding: URLEncoding.default,headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300)
             .responseJSON(){response in
                 switch response.result{
@@ -125,6 +129,7 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
                             self.boardLocation2.append(jsonParsing[i].location2)
                             self.boardAge.append(jsonParsing[i].age)
                             self.boardTotal.append(jsonParsing[i].numType)
+                            self.boardDate.append(jsonParsing[i].date)
                             self.boardUserIdx.append(jsonParsing[i].user.idx)
                             self.boardUserNickName.append(jsonParsing[i].user.nickName)
                             self.boardUserImg.append(jsonParsing[i].user.img)
@@ -158,6 +163,11 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
             //아니면 종료
             return
         }
+        controller.location1 = self.meetingLocation1
+        controller.location2 = self.meetingLocation2
+        controller.date = self.meetingDate
+        controller.age = self.meetingAge
+        controller.total = self.meetingTotal
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true, completion: nil)
     }
@@ -167,33 +177,33 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     
    //스크롤이 끝일 경우 수행
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print(self.boardIdx)
         if(!scrollReloadPossible){
-            print("aaaaaaa")
             return
         }
         else{
             scrollReloadPossible = false
-            print("bbbbbbb")
         }
-        print("cccccccc")
         let url = Config.baseURL + "/api/boards"
         let nextPageCount = self.pageCount+1
-        let PARMS = [
-            "page": nextPageCount,
-            "userId":Config.userIdx!
         
+        let PARMS:Parameters = [
+            "page": nextPageCount,
+            "userId": Config.userIdx!,
+            "location1":meetingLocation1!,
+            "location2":meetingLocation2!,
+            "age":meetingAge!,
+            "num_type":meetingTotal!,
+            "date":meetingDate!,
+            "gender":Config.userGender!
         ]
         AF.request(url, method: .get, parameters: PARMS,encoding: URLEncoding.default ,headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300)
             .responseJSON(){response in
                 switch response.result{
                 case .success(let json):
                     do {
-                        print(json)
                         let boardNum = self.boardIdx.count
                         let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
                         let jsonParsing = try JSONDecoder().decode(BoardsParse.self, from: data)
-                        print(jsonParsing)
                         for i in 0 ..< jsonParsing.count{
                             self.boardIdx.append(jsonParsing[i].idx)
                             self.boardimg1.append(jsonParsing[i].img1)
@@ -203,6 +213,7 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
                             self.boardTag3.append(jsonParsing[i].tag3)
                             self.boardLocation1.append(jsonParsing[i].location1)
                             self.boardLocation2.append(jsonParsing[i].location2)
+                            self.boardDate.append(jsonParsing[i].date)
                             self.boardAge.append(jsonParsing[i].age)
                             self.boardTotal.append(jsonParsing[i].numType)
                             self.boardUserIdx.append(jsonParsing[i].user.idx)
@@ -211,7 +222,6 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
                             self.boardChecked.append(jsonParsing[i].check)
                             
                             self.collectionView?.performBatchUpdates({
-                                print("\(self.boardIdx[i+boardNum]!) ,,,,, \(self.boardChecked[i+boardNum]!)")
                                 let indexPath = IndexPath(row: i+boardNum, section: 0)
                                 self.collectionView?.insertItems(at: [indexPath])
                             }, completion: nil)
@@ -253,6 +263,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         cell.lblCellLocation2.text = boardLocation2[indexPath.row]
         cell.lblCellTotal.text = boardTotal[indexPath.row]
         cell.lblCellAge.text = "\(String(describing: boardAge[indexPath.row]))"
+        
+        let tmpDateArr = boardDate[indexPath.row].components(separatedBy: "-")
+        cell.lblCellDate.text = tmpDateArr[1] + "월 " + tmpDateArr[2] + "일"
+        
         if (boardChecked[indexPath.row]!){
             cell.btnStar.setImage(UIImage(named: "./images/star_fill.png"), for: .normal)
         }
@@ -260,23 +274,23 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
             cell.btnStar.setImage(UIImage(named: "./images/star_empty.png"), for: .normal)
         }
         
-        
-        cell.shadowDecorate()
+        cell.viewTranslucent.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        //cell.shadowDecorate()
         
         return cell
     }
     
     //행당 2개씩 셀 출력을 위해서
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width1 = collectionView.frame.size.width / 2.4
-        return CGSize(width: width1, height: width1 * 1.3)
+        let width1 = collectionView.frame.size.width / 2
+        return CGSize(width: width1 - 8, height: (width1 - 8) * 0.9)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
+        return 5
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 20
+        return 0
     }
     
     //cell 이 터치시 수행하는 함수
@@ -293,16 +307,15 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
     
     
     @IBAction func btnStar(_ sender: UIButton) {
-        print(self.boardChecked)
         let contentView = sender.superview
         let cell = contentView?.superview as! UICollectionViewCell
-        let index = collectionView.indexPath(for: cell)
+        guard let index = collectionView.indexPath(for: cell) else {return;}
         //즐겨찾기 추가
-        if (!boardChecked[index!.row]!){
+        if (!boardChecked[index.row]!){
             let url  = Config.baseURL + "/api/bookmark"
             let PARMS = [
                 "userId":Config.userIdx!,
-                "boardId":self.boardIdx[index!.row]!
+                "boardId":self.boardIdx[index.row]!
             ]
             AF.request(url, method: .post ,parameters: PARMS , encoding: JSONEncoding.default, headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300)
                 .responseJSON(){response in
@@ -310,10 +323,10 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
                     case .success(let json):
                         do {
                             let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                            let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                            let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                             if (jsonParsing.code == 200){
-                                self.boardChecked[index!.row] = true
-                                self.collectionView.reloadItems(at: [index!])
+                                self.boardChecked[index.row] = true
+                                self.collectionView.reloadItems(at: [index])
                             }
                         }catch let jsonError{
                             print("Error seriallizing json:",jsonError)
@@ -325,17 +338,17 @@ class SearchRoomViewController: UIViewController, UICollectionViewDataSource,UIC
         }
         //즐겨찾기 제거
         else{
-            let url  = Config.baseURL + "/api/bookmark/\(Config.userIdx!)/\(self.boardIdx[index!.row]!)"
+            let url  = Config.baseURL + "/api/bookmark/\(Config.userIdx!)/\(self.boardIdx[index.row]!)"
             AF.request(url, method: .delete , encoding: URLEncoding.default, headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300)
                 .responseJSON(){response in
                     switch response.result{
                     case .success(let json):
                         do {
                             let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                            let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                            let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                             if (jsonParsing.code == 200){
-                                self.boardChecked[index!.row] = false
-                                self.collectionView.reloadItems(at: [index!])
+                                self.boardChecked[index.row] = false
+                                self.collectionView.reloadItems(at: [index])
                             }
                         }catch let jsonError{
                             print("Error seriallizing json:",jsonError)
@@ -374,6 +387,8 @@ class CustomCell:UICollectionViewCell {
     @IBOutlet var lblCellLocation2: UILabel!
     @IBOutlet var lblCellTotal: UILabel!
     @IBOutlet var lblCellAge: UILabel!
+    @IBOutlet var lblCellDate: UILabel!
     @IBOutlet var btnStar: UIButton!
+    @IBOutlet var viewTranslucent: UIView!
     
 }

@@ -15,10 +15,11 @@ class DetailRoomViewController: UIViewController {
     @IBOutlet var imgBoard1: UIImageView!
     @IBOutlet var imgBoard2: UIImageView!
     @IBOutlet var imgBoard3: UIImageView!
-    @IBOutlet var txtTitle: UILabel!
-    @IBOutlet var txtLocation: UILabel!
-    @IBOutlet var txtTotal: UILabel!
-    @IBOutlet var txtTag: UILabel!
+    @IBOutlet var lblTitle: UILabel!
+    @IBOutlet var lblLocation: UILabel!
+    @IBOutlet var lblTotal: UILabel!
+    @IBOutlet var lbldate: UILabel!
+    @IBOutlet var lblTag: UILabel!
     @IBOutlet var btnStar: UIButton!
     
     var boardIdx:Int?
@@ -83,10 +84,11 @@ class DetailRoomViewController: UIViewController {
                             self.starChecked = false
                         }
                 
-                        self.txtTitle.text = jsonParsing.title
-                        self.txtLocation.text = jsonParsing.location1 + " " + jsonParsing.location2
-                        self.txtTag.text = "#\(jsonParsing.tag1) #\(jsonParsing.tag2) #\(jsonParsing.tag3)"
-                        self.txtTotal.text = jsonParsing.numType
+                        self.lblTitle.text = jsonParsing.title
+                        self.lblLocation.text = jsonParsing.location1 + " " + jsonParsing.location2
+                        self.lbldate.text = jsonParsing.date
+                        self.lblTag.text = "#\(jsonParsing.tag1) #\(jsonParsing.tag2) #\(jsonParsing.tag3)"
+                        self.lblTotal.text = jsonParsing.numType
                         
                     }catch let jsonError{
                         print("Error seriallizing json:",jsonError)
@@ -122,7 +124,7 @@ class DetailRoomViewController: UIViewController {
                     case .success(let json):
                         do {
                             let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                            let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                            let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                             if (jsonParsing.code == 200){
                                 self.starChecked = true
                                 self.btnStar.setImage(UIImage(named: "./images/star_fill.png"), for: .normal)
@@ -154,7 +156,7 @@ class DetailRoomViewController: UIViewController {
                     case .success(let json):
                         do {
                             let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                            let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                            let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                             if (jsonParsing.code == 200){
                                 self.starChecked = false
                                 self.btnStar.setImage(UIImage(named: "./images/star_empty.png"), for: .normal)
@@ -197,7 +199,7 @@ class DetailRoomViewController: UIViewController {
                     case .success(let json):
                         do {
                             let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                            let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                            let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                             if (jsonParsing.code == 200){
                                 self.myAlert("알림", message: "요청을 완료 하였습니다! 상대방에게 알림을 성공적으로 보냈습니다")
                             }
@@ -230,7 +232,7 @@ class DetailRoomViewController: UIViewController {
                     case .success(let json):
                         do {
                             let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                            let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                            let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                             if (jsonParsing.code == 200){
                                 self.myAlert("알림", message: "요청을 완료 하였습니다! 상대방에게 지불요청을 보냈습니다.")
                             }

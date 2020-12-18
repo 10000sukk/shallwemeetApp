@@ -14,7 +14,6 @@ class MyPageViewController: UIViewController {
     
     @IBOutlet var imgProfilePhoto: UIImageView!
     @IBOutlet var lblNickName: UILabel!
-    @IBOutlet var lblKakaoID: UILabel!
     @IBOutlet var lblAge: UILabel!
     @IBOutlet var lblGender: UILabel!
     @IBOutlet var lblMyLocation1: UILabel!
@@ -58,7 +57,6 @@ class MyPageViewController: UIViewController {
                             self.imgProfilePhoto.image = nil
                         }
                         self.lblNickName.text = jsonParsing.nickName
-                        self.lblKakaoID.text = jsonParsing.kakaoID
                         self.lblAge.text = jsonParsing.age
                         self.lblGender.text = jsonParsing.gender
                         self.lblMyLocation1.text = jsonParsing.location1

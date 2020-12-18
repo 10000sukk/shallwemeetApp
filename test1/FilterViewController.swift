@@ -16,6 +16,13 @@ class FilterViewController: UIViewController {
     @IBOutlet var lblAge: UILabel!
     @IBOutlet var sliderBar: UISlider!
     @IBOutlet var btnTotal: UIButton!
+    @IBOutlet var btnDate: UIButton!
+    
+    var location1:String?
+    var location2:String?
+    var age:String?
+    var date:String?
+    var total:String?
     
     var gradientLayer: CAGradientLayer!
     
@@ -31,6 +38,22 @@ class FilterViewController: UIViewController {
         self.gradientLayer.colors = [UIColor(red: backGroundColor.startColorRed, green: backGroundColor.startColorGreen, blue: backGroundColor.startColorBlue , alpha: 1).cgColor, UIColor(red: backGroundColor.endColorRed , green: backGroundColor.endColorGreen, blue: backGroundColor.endColorBlue, alpha: 1).cgColor]
         self.view.layer.insertSublayer(self.gradientLayer, at: 0)
         
+        if let location1 = self.location1{
+            self.btnLocation1.setTitle(location1, for: .normal)
+        }
+        if let location2 = self.location2{
+            self.btnLocation2.setTitle(location2, for: .normal)
+        }
+        if let age = self.age{
+            self.lblAge.text = age
+        }
+        
+        if let total = self.total{
+            self.btnTotal.setTitle(total, for: .normal)
+        }
+        if let date = self.date{
+            self.btnDate.setTitle(date, for: .normal)
+        }
         
         
     }
@@ -63,12 +86,14 @@ class FilterViewController: UIViewController {
         controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
         controller.beforeController = "FilterViewController"
         controller.location1 = self.btnLocation1.titleLabel?.text!
-        print(controller.location1)
         self.present(controller, animated: false, completion: nil)
     }
     
     @IBAction func sliderValueChanged(_ sender: UISlider) {
-        lblAge.text = "\(Int(sender.value))"
+        self.lblAge.text = "\(Int(sender.value))"
+        if(Int(sender.value) == 19){
+            self.lblAge.text = "상관없음"
+        }
     }
     @IBAction func btnTotal(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Picker", bundle: nil)
@@ -81,6 +106,17 @@ class FilterViewController: UIViewController {
         self.present(controller, animated: false, completion: nil)
     }
     
+    
+    @IBAction func btnDate(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Picker", bundle: nil)
+        guard let controller = storyboard.instantiateViewController(withIdentifier: "PickerDateViewController") as? PickerDateViewController else {return}
+        controller.providesPresentationContextTransitionStyle = true
+        controller.definesPresentationContext = true
+        controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
+        controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
+        controller.beforeController = "FilterViewController"
+        self.present(controller, animated: false, completion: nil)
+    }
     
     
     @IBAction func btnDone(_ sender: UIButton) {

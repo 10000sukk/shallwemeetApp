@@ -27,7 +27,9 @@ class PickerDateViewController: UIViewController {
         formatter.dateFormat = "yyyy-MM-dd"
         date = formatter.string(from: currentDate as Date)
         
-        datePicker?.minimumDate = Date()
+        datePicker?.minimumDate = currentDate
+        
+        datePicker?.maximumDate = Calendar.current.date(byAdding: .day, value: 7, to: currentDate)
         
         let ud = UserDefaults.standard
         if let beforeController = ud.string(forKey: "beforeController"){
@@ -48,7 +50,7 @@ class PickerDateViewController: UIViewController {
         let preVC = self.presentingViewController
         if (beforeController! == "MakeRoomViewController"){
             guard let vc = preVC as? MakeRoomViewController else {return}
-            //vc.btnDate.setTitle(self.date, for: .normal)
+            vc.btnDate.setTitle(self.date, for: .normal)
             self.presentingViewController?.dismiss(animated: false, completion:nil)
         }
         else if (beforeController! == "FilterViewController"){

@@ -27,7 +27,17 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
     @IBOutlet var collectionViewRecieveRequestMyRoom: UICollectionView!
     @IBOutlet var collectionViewRecieveRequest: UICollectionView!
     
+    
+    @IBOutlet var lblRecievedRequest: UILabel!
+    @IBOutlet var lblSendRequest: UILabel!
+    
+    //슬픈 Zzuni를 넣는다
+    @IBOutlet var imgSadZzuni: UIImageView!
+    
+    
     var gradientLayer: CAGradientLayer!
+    
+    
     
     //받은요청 나의 방에 대한 정보 배열
     //내 방에 대한 정보
@@ -92,6 +102,9 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         pageControlRecieveRequestMyRoom.currentPage = 0
         
+        //zzuni를 숨겨놓는것
+        //self.imgSadZzuni.isHidden = true
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -124,6 +137,7 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
         sendRequestRoomTotal = []
         
         collectionViewSendRequstChildTag = 0
+        pageControlCurrentNumberSendRequestCell = []
         
         let URLRecievedRequest = Config.baseURL + "/api/match/maker/\(String(describing: Config.userIdx!))"
         let URLSendRequest = Config.baseURL + "/api/match/sender/\(String(describing: Config.userIdx!))"
@@ -240,9 +254,14 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
         //받은요청
         case 0:
             self.parentScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated:true)
+            self.lblRecievedRequest.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+            self.lblSendRequest.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            
         //보낸요청
         case 1:
             self.parentScrollView.setContentOffset(CGPoint(x: self.view.frame.size.width, y: 0), animated:true)
+            self.lblRecievedRequest.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            self.lblSendRequest.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
         default:
             self.parentScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated:true)
         }
@@ -330,10 +349,18 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
             
         case self.collectionViewRecieveRequest.tag:
             if(self.recievedRequestUserIdx == []){
+                self.imgSadZzuni.isHidden = false
                 return 0
             }
             else{
-                return self.recievedRequestUserIdx[self.pageControlRecieveRequestMyRoom.currentPage].count
+                let tmp = self.recievedRequestUserIdx[self.pageControlRecieveRequestMyRoom.currentPage].count
+                if(tmp == 0){
+                    self.imgSadZzuni.isHidden = false
+                }
+                else{
+                    self.imgSadZzuni.isHidden = true
+                }
+                return tmp
             }
                 
         case self.collectionViewSendRequestParent.tag:
@@ -366,6 +393,8 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
             cell.lblMyRoomLocation1.text = self.myRoomLocation1[indexPath.row] + " " + self.myRoomLocation2[indexPath.row]
             //cell.lblMyRoomLocation2.text = self.myRoomLocation2[indexPath.row]
             cell.lblMyRoomTotal.text = self.myRoomTotal[indexPath.row]
+            
+            cell.viewTranslucent.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
             
             //cell 테두리
             cell.shadowDecorate()
@@ -400,11 +429,17 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
         case self.collectionViewSendRequestParent.tag:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SendRequestParentCell", for: indexPath)
                 as! SendRequestParentCell
-            print(self.pageControlCurrentNumberSendRequestCell)
             cell.pageControlSendRequest.numberOfPages = self.sendRequestRoomIdx[indexPath.section].count
             cell.pageControlSendRequest.currentPage = self.pageControlCurrentNumberSendRequestCell[indexPath.section]
             cell.collectionViewSendRequestChild.tag = self.sendRequestCollectionViewTag[indexPath.section]
+            
             cell.collectionViewSendRequestChild.reloadData()
+            
+            //스크롤하여서 페이지 유지
+            if(self.pageControlCurrentNumberSendRequestCell[indexPath.section] != 0){
+                cell.collectionViewSendRequestChild.scrollToItem(at: IndexPath(row: self.pageControlCurrentNumberSendRequestCell[indexPath.section], section: 0), at: .centeredHorizontally, animated: false)
+            }
+        
             //cell 테두리
             cell.layer.borderColor = UIColor.clear.cgColor
             cell.layer.borderWidth = 2
@@ -416,8 +451,7 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
             if(self.sendRequestCollectionViewTag.contains(collectionView.tag)){
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SendRequestChildCell", for: indexPath)
                     as! SendRequestChildCell
-                print(self.sendRequestRoomImage)
-                print(indexPath)
+    
                 let url =  URL(string: self.sendRequestRoomImage[collectionView.tag][indexPath.row])
                 do{
                     let data = try Data(contentsOf: url!)
@@ -430,6 +464,7 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
                 cell.lblSendRequestRoomLocation1.text = self.sendRequestRoomLocation1[collectionView.tag][indexPath.row] + " " + self.sendRequestRoomLocation2[collectionView.tag][indexPath.row]
                 //cell.lblSendRequestRoomLocation2.text = self.sendRequestRoomLocation2[collectionView.tag][indexPath.row]
                 cell.lblSendRequestRoomTotal.text = self.sendRequestRoomTotal[collectionView.tag][indexPath.row]
+                cell.viewTranslucent.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
                 
                 //cell 테두리
                 cell.shadowDecorate()
@@ -466,7 +501,7 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
             return CGSize(width: width * 0.8, height: 100)
             
         case self.collectionViewSendRequestParent.tag:
-            return CGSize(width: width * 1, height: width * 1.1)
+            return CGSize(width: width * 1, height: width)
             
         default:
             return CGSize(width: width * 1, height: width * 0.9)
@@ -553,11 +588,16 @@ class MyListViewController: UIViewController, UICollectionViewDelegate, UICollec
             present(controller,animated: true, completion: nil)
         
         case self.collectionViewRecieveRequest.tag:
-//            guard let controller = self.storyboard?.instantiateViewController(withIdentifier: "DetailRoomViewController") as?
-//                DetailRoomViewController else { return}
-//
-//            controller.modalPresentationStyle = .fullScreen
-//            present(controller,animated: true, completion: nil)
+            guard let controller = self.storyboard?.instantiateViewController(withIdentifier: "RecievedRequestDetailViewController") as?
+                    RecievedRequestDetailViewController else { return}
+            controller.otherUserIdx = self.recievedRequestUserIdx[self.pageControlRecieveRequestMyRoom.currentPage][indexPath.row]
+            controller.isPaid = self.recievedRequestStatus[self.pageControlRecieveRequestMyRoom.currentPage][indexPath.row]
+            controller.boardIdx = self.myRoomIdx[self.pageControlRecieveRequestMyRoom.currentPage]
+            controller.providesPresentationContextTransitionStyle = true
+            controller.definesPresentationContext = true
+            controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext;
+            controller.view.backgroundColor = UIColor.init(white: 0.4, alpha: 0.8)
+            present(controller,animated: false, completion: nil)
             return
         default:
             if(self.sendRequestCollectionViewTag.contains(collectionView.tag)){
@@ -603,6 +643,8 @@ class RecieveRequestMyRoomCell:UICollectionViewCell{
     @IBOutlet var lblMyRoomTitle: UILabel!
     @IBOutlet var lblMyRoomLocation1: UILabel!
     @IBOutlet var lblMyRoomTotal: UILabel!
+    @IBOutlet var viewTranslucent: UIView!
+    
 }
 
 class RecieveRequestCell:UICollectionViewCell{
@@ -629,6 +671,7 @@ class SendRequestChildCell:UICollectionViewCell{
     @IBOutlet var lblSendRequestRoomTitle: UILabel!
     @IBOutlet var lblSendRequestRoomLocation1: UILabel!
     @IBOutlet var lblSendRequestRoomTotal: UILabel!
+    @IBOutlet var viewTranslucent: UIView!
     
 }
 

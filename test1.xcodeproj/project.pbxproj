@@ -17,11 +17,12 @@
 		E70C17AE25279B8A00026B5D /* images in Resources */ = {isa = PBXBuildFile; fileRef = E70C17AD25279B8A00026B5D /* images */; };
 		E70C17B025279C7200026B5D /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70C17AF25279C7200026B5D /* LoginViewController.swift */; };
 		E70C17D225286A9E00026B5D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70C17D125286A9E00026B5D /* Config.swift */; };
+		E71ACE382580D3320029A992 /* SMSCheckViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71ACE372580D3320029A992 /* SMSCheckViewController.swift */; };
+		E71ACE3C2580F9310029A992 /* RecievedRequestDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71ACE3B2580F9310029A992 /* RecievedRequestDetailViewController.swift */; };
+		E71ACE40258132010029A992 /* AppIcon.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = E71ACE3F258132010029A992 /* AppIcon.appiconset */; };
 		E73BFE3325784AF700ED8452 /* JalnanOTF.otf in Resources */ = {isa = PBXBuildFile; fileRef = E73BFE2F257849D800ED8452 /* JalnanOTF.otf */; };
 		E73BFE3625784C9500ED8452 /* Jalnan.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E73BFE3525784C8E00ED8452 /* Jalnan.ttf */; };
-		E752AE5E253B0552007D15D3 /* example1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E752AE5D253B0552007D15D3 /* example1.jpg */; };
 		E752AE61253B11D6007D15D3 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E752AE60253B11D6007D15D3 /* FilterViewController.swift */; };
-		E752AEB9253B60A5007D15D3 /* example2.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = E752AEB8253B60A5007D15D3 /* example2.jpeg */; };
 		E752AF442550177A007D15D3 /* Parsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E752AF4325501779007D15D3 /* Parsing.swift */; };
 		E786210E255C2EBD00973F27 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E786210D255C2EBD00973F27 /* GoogleService-Info.plist */; };
 		E78621222561325B00973F27 /* PickerDate2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78621212561325B00973F27 /* PickerDate2ViewController.swift */; };
@@ -60,11 +61,12 @@
 		E70C17AD25279B8A00026B5D /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
 		E70C17AF25279C7200026B5D /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		E70C17D125286A9E00026B5D /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		E71ACE372580D3320029A992 /* SMSCheckViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSCheckViewController.swift; sourceTree = "<group>"; };
+		E71ACE3B2580F9310029A992 /* RecievedRequestDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecievedRequestDetailViewController.swift; sourceTree = "<group>"; };
+		E71ACE3F258132010029A992 /* AppIcon.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppIcon.appiconset; sourceTree = "<group>"; };
 		E73BFE2F257849D800ED8452 /* JalnanOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = JalnanOTF.otf; sourceTree = "<group>"; };
 		E73BFE3525784C8E00ED8452 /* Jalnan.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Jalnan.ttf; sourceTree = "<group>"; };
-		E752AE5D253B0552007D15D3 /* example1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = example1.jpg; path = img/example1.jpg; sourceTree = SOURCE_ROOT; };
 		E752AE60253B11D6007D15D3 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
-		E752AEB8253B60A5007D15D3 /* example2.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = example2.jpeg; sourceTree = "<group>"; };
 		E752AF4325501779007D15D3 /* Parsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parsing.swift; sourceTree = "<group>"; };
 		E786210D255C2EBD00973F27 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E78621212561325B00973F27 /* PickerDate2ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerDate2ViewController.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				E70C179F252797F100026B5D /* Main.storyboard */,
 				E70C179D252797F100026B5D /* ViewController.swift */,
 				E70C17AF25279C7200026B5D /* LoginViewController.swift */,
+				E71ACE372580D3320029A992 /* SMSCheckViewController.swift */,
 				E78DA77C252E32E500B048DD /* EditProfileViewController.swift */,
 				E7FD70C425320CEF0020B197 /* MainTabBarViewController.swift */,
 				E7FD705D2531EC8C0020B197 /* HomeViewController.swift */,
@@ -151,6 +154,7 @@
 				E752AE60253B11D6007D15D3 /* FilterViewController.swift */,
 				E7FD70FD253AB1440020B197 /* DetailRoomViewController.swift */,
 				E7FD70612531EE670020B197 /* MyListViewController.swift */,
+				E71ACE3B2580F9310029A992 /* RecievedRequestDetailViewController.swift */,
 				E78621252563AB7800973F27 /* MyRoomDetailViewController.swift */,
 				E7FD70642531F02C0020B197 /* FavoriteListViewController.swift */,
 				E7FD70682531F0430020B197 /* MatchedListViewController.swift */,
@@ -162,6 +166,7 @@
 				E73BFE2F257849D800ED8452 /* JalnanOTF.otf */,
 				E73BFE3525784C8E00ED8452 /* Jalnan.ttf */,
 				E70C17A2252797F200026B5D /* Assets.xcassets */,
+				E71ACE3F258132010029A992 /* AppIcon.appiconset */,
 				E70C17A4252797F200026B5D /* LaunchScreen.storyboard */,
 				E7E97C5B2551CED500617975 /* Picker.storyboard */,
 				E7E97C5F2551CF3600617975 /* PickerLocation1ViewController.swift */,
@@ -171,8 +176,6 @@
 				E78621212561325B00973F27 /* PickerDate2ViewController.swift */,
 				E70C17A7252797F200026B5D /* Info.plist */,
 				E786210D255C2EBD00973F27 /* GoogleService-Info.plist */,
-				E752AE5D253B0552007D15D3 /* example1.jpg */,
-				E752AEB8253B60A5007D15D3 /* example2.jpeg */,
 				E70C17AD25279B8A00026B5D /* images */,
 			);
 			path = test1;
@@ -241,13 +244,12 @@
 				E73BFE3625784C9500ED8452 /* Jalnan.ttf in Resources */,
 				E70C17AE25279B8A00026B5D /* images in Resources */,
 				E786210E255C2EBD00973F27 /* GoogleService-Info.plist in Resources */,
+				E71ACE40258132010029A992 /* AppIcon.appiconset in Resources */,
 				E70C17A6252797F200026B5D /* LaunchScreen.storyboard in Resources */,
 				E70C17A3252797F200026B5D /* Assets.xcassets in Resources */,
-				E752AEB9253B60A5007D15D3 /* example2.jpeg in Resources */,
 				E70C17A1252797F100026B5D /* Main.storyboard in Resources */,
 				E73BFE3325784AF700ED8452 /* JalnanOTF.otf in Resources */,
 				E7E97C5C2551CED500617975 /* Picker.storyboard in Resources */,
-				E752AE5E253B0552007D15D3 /* example1.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +319,8 @@
 				E7E97C6F255227B300617975 /* PickerTotalViewController.swift in Sources */,
 				E78621222561325B00973F27 /* PickerDate2ViewController.swift in Sources */,
 				E7FD70F0253894180020B197 /* MakeRoomViewController.swift in Sources */,
+				E71ACE382580D3320029A992 /* SMSCheckViewController.swift in Sources */,
+				E71ACE3C2580F9310029A992 /* RecievedRequestDetailViewController.swift in Sources */,
 				E78621262563AB7800973F27 /* MyRoomDetailViewController.swift in Sources */,
 				E7FD705E2531EC8C0020B197 /* HomeViewController.swift in Sources */,
 				E7FD70C525320CEF0020B197 /* MainTabBarViewController.swift in Sources */,

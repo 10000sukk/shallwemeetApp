@@ -17,13 +17,14 @@ class MyRoomDetailViewController: UIViewController, UICollectionViewDelegate,UIC
     
     
     
+    @IBOutlet var lblTitle: UILabel!
     @IBOutlet var lblLocation1: UILabel!
     @IBOutlet var lblLocation2: UILabel!
     @IBOutlet var lblAge: UILabel!
     @IBOutlet var lblTotal: UILabel!
-    @IBOutlet var lblTag1: UILabel!
-    @IBOutlet var lblTag2: UILabel!
-    @IBOutlet var lblTag3: UILabel!
+    @IBOutlet var lbldate: UILabel!
+    @IBOutlet var lblTag: UILabel!
+    
     
     var images:[String] = []
     var boardIdx:Int?
@@ -56,13 +57,13 @@ class MyRoomDetailViewController: UIViewController, UICollectionViewDelegate,UIC
                         let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
                         let jsonParsing = try JSONDecoder().decode(DetailBoardParsing.self, from: data)
                         
+                        self.lblTitle.text = jsonParsing.title
                         self.lblLocation1.text = jsonParsing.location1
                         self.lblLocation2.text = jsonParsing.location2
                         self.lblAge.text = "\(jsonParsing.age) 세"
                         self.lblTotal.text = jsonParsing.numType
-                        self.lblTag1.text = "#" + jsonParsing.tag1
-                        self.lblTag2.text = "#" + jsonParsing.tag2
-                        self.lblTag3.text = "#" + jsonParsing.tag3
+                        self.lbldate.text = jsonParsing.date
+                        self.lblTag.text = "#" + jsonParsing.tag1 + "#" + jsonParsing.tag2 + "#" + jsonParsing.tag3
                         //cell image info save
                         self.images.append(jsonParsing.img1)
                         self.images.append(jsonParsing.img2)
@@ -128,14 +129,14 @@ class MyRoomDetailViewController: UIViewController, UICollectionViewDelegate,UIC
     
     @IBAction func btnRoomRemove(_ sender: UIButton) {
         let alert = UIAlertController(title: "확인", message: "방을 삭제 하시겠습니까?", preferredStyle: .alert)
-        let actionRemove = UIAlertAction(title: "삭제", style: .default, handler: { action in
+        let actionRemove = UIAlertAction(title: "삭제", style: .destructive, handler: { action in
             let url  = Config.baseURL + "/api/boards" + "/\(self.boardIdx!)"
             AF.request(url, method: .delete, encoding: URLEncoding.default, headers: ["Content-Type":"application/json"]).validate(statusCode: 200 ..< 300).responseJSON(){response in
                 switch response.result{
                 case .success(let json):
                     do{
                         let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                        let jsonParsing = try JSONDecoder().decode(CodeAndMessage.self, from: data)
+                        let jsonParsing = try JSONDecoder().decode(CodeAndMsg.self, from: data)
                         if(jsonParsing.code == 200){
                             let alertSuccess = UIAlertController(title: "알림", message: "삭제를 완료하였습니다", preferredStyle: .alert)
                             let actionOK = UIAlertAction(title: "확인", style: .default, handler: {action in
@@ -157,7 +158,7 @@ class MyRoomDetailViewController: UIViewController, UICollectionViewDelegate,UIC
             }
             
         })
-        let actionCancle = UIAlertAction(title: "아니요", style: .destructive, handler: nil)
+        let actionCancle = UIAlertAction(title: "아니요", style: .cancel, handler: nil)
         alert.addAction(actionRemove)
         alert.addAction(actionCancle)
         self.present(alert, animated: true, completion: nil)
